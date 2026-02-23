@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gradient-start: #f0f4ff;
+  --gradient-mid: #e8eeff;
+  --gradient-end: #ede9fe;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.9);
+}
+
+.dark {
+  --gradient-start: #0f172a;
+  --gradient-mid: #1e1b4b;
+  --gradient-end: #312e81;
+  --glass-bg: rgba(30, 27, 75, 0.6);
+  --glass-border: rgba(99, 102, 241, 0.3);
+}
+
+body {
+  @apply bg-gradient-to-br from-[var(--gradient-start)] via-[var(--gradient-mid)] to-[var(--gradient-end)] min-h-screen text-gray-800 dark:text-gray-100 antialiased;
+}
+
+.glass {
+  @apply rounded-card border border-white/20 dark:border-primary-500/20;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+}
+
+.input-digit {
+  @apply w-12 h-12 sm:w-14 sm:h-14 text-center text-xl font-bold rounded-xl border-2 border-primary-200 dark:border-primary-600 bg-white/80 dark:bg-primary-900/50 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800 outline-none transition;
+}
+
+.btn-primary {
+  @apply px-6 py-3 rounded-button font-semibold bg-gradient-to-r from-primary-500 to-accent-500 text-white shadow-lg hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] transition disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 rounded-button font-semibold bg-white/80 dark:bg-primary-800/80 border-2 border-primary-200 dark:border-primary-600 text-primary-700 dark:text-primary-200 hover:border-primary-400 hover:bg-white dark:hover:bg-primary-700/80 transition;
+}
