@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useMultiplayer } from '@/hooks/useMultiplayer';
@@ -11,7 +11,7 @@ import { GuessRow } from '@/components/Game/GuessRow';
 import { Confetti } from '@/components/Game/Confetti';
 import { TurnTimer } from '@/components/Game/TurnTimer';
 
-export default function MultiplayerRoomPage() {
+function MultiplayerRoomContent() {
   const searchParams = useSearchParams();
   const roomIdParam = searchParams.get('roomId') || '';
   const created = searchParams.get('created') === '1';
@@ -210,5 +210,18 @@ export default function MultiplayerRoomPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function MultiplayerRoomPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen pt-16 flex items-center justify-center">
+        <Header />
+        <p className="text-gray-600 dark:text-gray-400">Loading…</p>
+      </div>
+    }>
+      <MultiplayerRoomContent />
+    </Suspense>
   );
 }

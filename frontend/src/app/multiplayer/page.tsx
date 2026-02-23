@@ -27,8 +27,10 @@ export default function MultiplayerLobbyPage() {
       setRoom(null);
       setMyRole(data.role);
       router.push(`/multiplayer/room?roomId=${data.code}&created=1`);
-    } catch (e) {
-      setError('Failed to create room');
+    } catch (e: unknown) {
+      const err = e as { message?: string; error?: string; detail?: string };
+      const msg = err?.error ?? err?.message ?? 'Failed to create room';
+      setError(msg + (err?.detail ? ` (${err.detail})` : ''));
     } finally {
       setLoading(null);
     }

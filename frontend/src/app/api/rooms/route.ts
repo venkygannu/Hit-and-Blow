@@ -23,7 +23,11 @@ export async function POST(req: Request) {
       .single();
 
     if (roomErr || !room) {
-      return NextResponse.json({ error: 'Failed to create room' }, { status: 500 });
+      console.error('[rooms POST] room insert failed:', roomErr?.message ?? roomErr);
+      return NextResponse.json(
+        { error: 'Failed to create room', detail: roomErr?.message },
+        { status: 500 }
+      );
     }
 
     const { error: playerErr } = await supabase.from('room_players').insert({
@@ -33,8 +37,12 @@ export async function POST(req: Request) {
     });
 
     if (playerErr) {
+      console.error('[rooms POST] room_players insert failed:', playerErr?.message ?? playerErr);
       await supabase.from('rooms').delete().eq('id', room.id);
-      return NextResponse.json({ error: 'Failed to create room' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to create room', detail: playerErr?.message },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({
@@ -44,6 +52,14 @@ export async function POST(req: Request) {
       role: 'player1',
     });
   } catch (e) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    const message = e instanceof Error ? e.message : 'Server error';
+    console.error('[rooms POST] error:', message);
+    if (message.includes('Missing') && message.includes('SUPABASE')) {
+      return NextResponse.json(
+        { error: 'Server misconfigured: add Supabase URL and keys in Vercel Environment Variables.' },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json({ error: 'Server error', detail: message }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@ import { Providers } from './providers';
 export const metadata: Metadata = {
   title: 'Hit & Blow — Number Duel',
   description: 'Modern multiplayer number guessing game. Play vs friends or CPU.',
+  icons: { icon: '/icon.svg' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

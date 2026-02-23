@@ -30,8 +30,13 @@ export function useMultiplayer() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ nickname }),
     });
-    if (!res.ok) throw new Error('Failed to create room');
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error((data?.error as string) || 'Failed to create room') as Error & { error?: string; detail?: string };
+      err.error = data?.error;
+      err.detail = data?.detail;
+      throw err;
+    }
     return { code: data.code as string, roomUuid: data.roomUuid as string, role: data.role as 'player1' | 'player2' };
   }, []);
 

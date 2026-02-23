@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/store/gameStore';
@@ -12,7 +12,7 @@ import { Confetti } from '@/components/Game/Confetti';
 
 const THINKING_DELAY_MS = 800;
 
-export default function CpuPlayPage() {
+function CpuPlayContent() {
   const searchParams = useSearchParams();
   const gameId = searchParams.get('gameId');
   const difficulty = (searchParams.get('difficulty') as 'easy' | 'medium' | 'hard') || 'medium';
@@ -175,5 +175,18 @@ export default function CpuPlayPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function CpuPlayPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen pt-16 flex items-center justify-center">
+        <Header />
+        <p className="text-gray-600 dark:text-gray-400">Loading…</p>
+      </div>
+    }>
+      <CpuPlayContent />
+    </Suspense>
   );
 }
