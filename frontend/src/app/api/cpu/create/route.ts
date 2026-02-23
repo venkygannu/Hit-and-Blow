@@ -21,10 +21,24 @@ export async function POST(req: Request) {
       history: [],
     });
 
-    if (error) return NextResponse.json({ error: 'Failed to create game' }, { status: 500 });
+    if (error) {
+      console.error('[cpu/create] insert failed:', error.message);
+      return NextResponse.json(
+        { error: 'Failed to start game', detail: error.message },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({ gameId, difficulty });
   } catch (e) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    const message = e instanceof Error ? e.message : 'Server error';
+    console.error('[cpu/create] error:', message);
+    if (message.includes('Missing') && message.includes('SUPABASE')) {
+      return NextResponse.json(
+        { error: 'Server misconfigured: add Supabase URL and keys in Vercel Environment Variables.' },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json({ error: 'Failed to start game', detail: message }, { status: 500 });
   }
 }

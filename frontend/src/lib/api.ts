@@ -4,8 +4,14 @@ export async function createCpuGame(difficulty: 'easy' | 'medium' | 'hard') {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ difficulty }),
   });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json() as Promise<{ gameId: string; difficulty: string }>;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error((data?.error as string) || 'Failed to start game') as Error & { error?: string; detail?: string };
+    err.error = data?.error;
+    err.detail = data?.detail;
+    throw err;
+  }
+  return data as { gameId: string; difficulty: string };
 }
 
 export async function submitCpuGuess(gameId: string, guess: string) {

@@ -23,8 +23,10 @@ export default function CpuSetupPage() {
       const { gameId } = await createCpuGame(difficulty);
       setCpu({ gameId, difficulty, playerTurn: true, guesses: [], winner: null, secret: null, thinking: false });
       window.location.href = `/cpu/play?gameId=${gameId}&difficulty=${difficulty}`;
-    } catch (e) {
-      setError('Failed to start game');
+    } catch (e: unknown) {
+      const err = e as { message?: string; error?: string; detail?: string };
+      const msg = err?.error ?? err?.message ?? 'Failed to start game';
+      setError(msg + (err?.detail ? ` — ${err.detail}` : ''));
     } finally {
       setLoading(false);
     }
